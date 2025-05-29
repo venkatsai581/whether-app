@@ -1,0 +1,100 @@
+const apiKey = "be0044d866dc49a6aca82103252705";
+
+document.getElementById("weatherForm").addEventListener("submit", async function (e) {
+  e.preventDefault();
+  const city = document.getElementById("cityInput").value.trim();
+  if (!city) return alert("Enter a city!");
+
+  const url = `https://api.weatherapi.com/v1/forecast.json?key=${apiKey}&q=${city}&days=7`;
+
+  try {
+    const res = await axios.get(url);
+    const data = res.data;
+
+    showCurrentWeather(data);
+    showHourlyForecast(data.forecast.forecastday[0].hour);
+    showForecast(data.forecast.forecastday);
+    showAirConditions(data.current);
+  } catch (err) {
+    console.error(err);
+    alert("Failed to fetch weather. Check city name.");
+  }
+});
+
+function showCurrentWeather(data) {
+  const location = document.getElementById("location");
+  const chanceOfRain = document.getElementById("chanceOfRain");
+  const temperature = document.getElementById("temperature");
+  const weatherIcon = document.getElementById("weatherIcon");
+
+  location.textContent = `${data.location.name}`;
+  chanceOfRain.textContent = `Chance of rain ${data.forecast.forecastday[0].day.daily_chance_of_rain}%`;
+  temperature.textContent = `${data.current.temp_c}°`;
+  weatherIcon.src = `https:${data.current.condition.icon}`;
+  weatherIcon.alt = data.current.condition.text;
+  weatherIcon.classList.remove("hidden");
+}
+
+function showHourlyForecast(hours) {
+  const hourlyDiv = document.getElementById("hourlyForecast");
+  hourlyDiv.innerHTML = "";
+
+  const times = ["6:00 AM", "9:00 AM", "12:00 PM", "3:00 PM", "6:00 PM", "9:00 PM"];
+  const hourIndices = [6, 9, 12, 15, 18, 21];
+
+  hourIndices.forEach((hourIndex, index) => {
+    const hour = hours[hourIndex];
+    if (hour) {
+      hourlyDiv.innerHTML += `
+        <div class="hourly-item">
+          <p>${times[index]}</p>
+          <img src="https:${hour.condition.icon}" alt="${hour.condition.text}" />
+          <p>${hour.temp_c}°</p>
+        </div>
+      `;
+    }
+  });
+}
+
+function showForecast(forecast) {
+  const forecastDiv = document.getElementById("forecast");
+  forecastDiv.innerHTML = "";
+
+  forecast.forEach((day, index) => {
+    const date = new Date(day.date);
+    const dayName = index === 0 ? "Today" : date.toLocaleString("en-US", { weekday: "short" });
+    const icon = day.day.condition.icon;
+    const text = day.day.condition.text;
+
+    forecastDiv.innerHTML += `
+      <div class="forecast-day">
+        <p>${dayName}</p>
+        <img src="https:${icon}" alt="${text}" />
+        <p>${text}</p>
+        <p>${day.day.maxtemp_c}°/${day.day.mintemp_c}°</p>
+      </div>
+    `;
+  });
+}
+
+function showAirConditions(data) {
+  const airConditionsDiv = document.getElementById("airConditions");
+  airConditionsDiv.innerHTML = `
+    <div class="air-condition-item">
+      <p>Real Feel</p>
+      <p>${data.feelslike_c}°</p>
+    </div>
+    <div class="air-condition-item">
+      <p>Wind</p>
+      <p>${data.wind_kph} km/h</p>
+    </div>
+    <div class="air-condition-item">
+      <p>Chance of Rain</p>
+      <p>${data.humidity}%</p>
+    </div>
+    <div class="air-condition-item">
+      <p>UV Index</p>
+      <p>${data.uv}</p>
+    </div>
+  `;
+}

@@ -3,7 +3,10 @@ const apiKey = "be0044d866dc49a6aca82103252705";
 document.getElementById("weatherForm").addEventListener("submit", async function (e) {
   e.preventDefault();
   const city = document.getElementById("cityInput").value.trim();
-  if (!city) return alert("Enter a city!");
+  if (!city) {
+    alert("Please enter a city!");
+    return;
+  }
 
   const url = `https://api.weatherapi.com/v1/forecast.json?key=${apiKey}&q=${city}&days=7`;
 
@@ -17,7 +20,7 @@ document.getElementById("weatherForm").addEventListener("submit", async function
     showAirConditions(data.current);
   } catch (err) {
     console.error(err);
-    alert("Failed to fetch weather. Check city name.");
+    alert("Failed to fetch weather. Please check the city name.");
   }
 });
 
@@ -27,9 +30,9 @@ function showCurrentWeather(data) {
   const temperature = document.getElementById("temperature");
   const weatherIcon = document.getElementById("weatherIcon");
 
-  location.textContent = `${data.location.name}`;
-  chanceOfRain.textContent = `Chance of rain ${data.forecast.forecastday[0].day.daily_chance_of_rain}%`;
-  temperature.textContent = `${data.current.temp_c}°`;
+  location.textContent = `${data.location.name}, ${data.location.country}`;
+  chanceOfRain.textContent = `Chance of rain: ${data.forecast.forecastday[0].day.daily_chance_of_rain}%`;
+  temperature.textContent = `${Math.round(data.current.temp_c)}°C`;
   weatherIcon.src = `https:${data.current.condition.icon}`;
   weatherIcon.alt = data.current.condition.text;
   weatherIcon.classList.remove("hidden");
@@ -49,7 +52,7 @@ function showHourlyForecast(hours) {
         <div class="hourly-item">
           <p>${times[index]}</p>
           <img src="https:${hour.condition.icon}" alt="${hour.condition.text}" />
-          <p>${hour.temp_c}°</p>
+          <p>${Math.round(hour.temp_c)}°C</p>
         </div>
       `;
     }
@@ -71,7 +74,7 @@ function showForecast(forecast) {
         <p>${dayName}</p>
         <img src="https:${icon}" alt="${text}" />
         <p>${text}</p>
-        <p>${day.day.maxtemp_c}°/${day.day.mintemp_c}°</p>
+        <p>${Math.round(day.day.maxtemp_c)}°/${Math.round(day.day.mintemp_c)}°</p>
       </div>
     `;
   });
@@ -82,14 +85,14 @@ function showAirConditions(data) {
   airConditionsDiv.innerHTML = `
     <div class="air-condition-item">
       <p>Real Feel</p>
-      <p>${data.feelslike_c}°</p>
+      <p>${Math.round(data.feelslike_c)}°C</p>
     </div>
     <div class="air-condition-item">
       <p>Wind</p>
       <p>${data.wind_kph} km/h</p>
     </div>
     <div class="air-condition-item">
-      <p>Chance of Rain</p>
+      <p>Humidity</p>
       <p>${data.humidity}%</p>
     </div>
     <div class="air-condition-item">

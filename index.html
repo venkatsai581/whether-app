@@ -4,21 +4,21 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Weather Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
-  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
   <div class="container">
     <h1 class="page-title">Weather Updates</h1>
-    <form id="weatherForm">
-      <input type="text" id="cityInput" placeholder="Search for cities" required />
+    <form id="weatherForm" aria-label="Search for city weather">
+      <input type="text" id="cityInput" placeholder="Search for cities" required aria-label="City name" />
       <button type="submit">Search</button>
     </form>
 
     <div class="weather-layout">
       <div class="weather-main">
         <div id="currentWeather" class="current-weather-card">
-          <h2 id="location"></h2>
+          <h2 id="location" aria-live="polite"></h2>
           <p id="chanceOfRain"></p>
           <h1 id="temperature"></h1>
           <img id="weatherIcon" class="weather-icon hidden" src="" alt="Weather Icon" />
@@ -42,7 +42,7 @@
     </div>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/axios@1.7.7/dist/axios.min.js"></script>
   <script src="script.js"></script>
 </body>
 </html>

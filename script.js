@@ -13,14 +13,14 @@ document.getElementById("weatherForm").addEventListener("submit", async function
   try {
     const res = await axios.get(url);
     const data = res.data;
-
+    console.log("Forecast Days:", data.forecast.forecastday.length); // Log number of days
     showCurrentWeather(data);
     showHourlyForecast(data.forecast.forecastday[0].hour);
     showForecast(data.forecast.forecastday);
     showAirConditions(data.current);
   } catch (err) {
-    console.error(err);
-    alert("Failed to fetch weather. Please check the city name.");
+    console.error("Error Details:", err.response ? err.response.data : err.message);
+    alert("Failed to fetch weather. Please check the city name or API plan.");
   }
 });
 
@@ -62,6 +62,8 @@ function showHourlyForecast(hours) {
 function showForecast(forecast) {
   const forecastDiv = document.getElementById("forecast");
   forecastDiv.innerHTML = "";
+  const maxDays = forecast.length; // Use actual number of days returned
+  document.querySelector(".forecast-section-right h3").textContent = `${maxDays}-Day Forecast`; // Update header dynamically
 
   forecast.forEach((day, index) => {
     const date = new Date(day.date);
